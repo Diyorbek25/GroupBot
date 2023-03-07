@@ -21,7 +21,19 @@ public static class ServiceCollectionExtension
     public static IServiceCollection AddTelegramBotService(
         this IServiceCollection services)
     {
-        services.AddScoped<BotService>();
+        services.AddScoped<UpdateHandler>();
+        return services;
+    }
+
+    public static IServiceCollection AddControllerMappers(
+       this IServiceCollection services)
+    {
+        services
+            .AddControllers()
+            .AddNewtonsoftJson();
+
+        services.AddEndpointsApiExplorer();
+
         return services;
     }
 }
