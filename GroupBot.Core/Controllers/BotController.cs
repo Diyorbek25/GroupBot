@@ -1,5 +1,8 @@
-﻿using GroupBot.Core.Services;
+﻿using GroupBot.Core.Models;
+using GroupBot.Core.Services;
 using Microsoft.AspNetCore.Mvc;
+using Telegram.Bot.Polling;
+using Telegram.Bot.Types;
 
 namespace GroupBot.Core.Controllers;
 
@@ -7,21 +10,31 @@ namespace GroupBot.Core.Controllers;
 [Route("bot")]
 public class BotController : ControllerBase
 {
-    private BotService botService;
+    private UpdateHandler botService;
 
-    public BotController(BotService botService)
+    public BotController(UpdateHandler botService)
     {
         this.botService = botService;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> Get(
-        long groupId,
-        string message)
+    [HttpPut]
+    public async Task<IActionResult> Get(GroupMessageModel model)
     {
 
         await botService
-            .SendMessageToGroupAsync(groupId, message);
+            .SendMessageToGroupAsync(model);
+
+        return Ok();
+    }
+
+
+    [HttpPost]
+    public async Task<IActionResult> Post(
+        [FromBody] Update update,
+        [FromServices] UpdateHandler updateHandler)
+    {
+        await updateHandler
+            .UpdateHandlerAsync(update);
 
         return Ok();
     }
